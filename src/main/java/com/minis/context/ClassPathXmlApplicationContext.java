@@ -14,9 +14,10 @@ import com.minis.core.Resource;
  * @since 1.0
  * 这里使用到了装饰器模式哦
  */
-public class ClassPathXmlApplicationContext implements BeanFactory {
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
 
-    BeanFactory beanFactory;
+    SimpleBeanFactory beanFactory;
+
 
     public ClassPathXmlApplicationContext(String fileName) {
         Resource resource = new ClassPathXmlResource(fileName);
@@ -26,15 +27,40 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
         this.beanFactory = simpleBeanFactory;
     }
 
-
-
     @Override
     public Object getBean(String beanName) throws NoSuchBeanDefinitionException {
         return this.beanFactory.getBean(beanName);
     }
 
     @Override
-    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanFactory.registerBeanDefinition(beanDefinition);
+    public Boolean containsBean(String beanName) {
+        return this.beanFactory.containsBean(beanName);
+    }
+
+
+    public void registerBean(String beanName, Object obj) {
+        this.beanFactory.registerBean(beanName, obj);
+    }
+
+    @Override
+    public boolean isSingleton(String name) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String name) {
+        return false;
+    }
+
+    @Override
+    public Class<?> getType(String name) {
+        return null;
+    }
+
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+
     }
 }

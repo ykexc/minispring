@@ -10,10 +10,10 @@ import org.dom4j.Element;
  */
 public class XmlBeanDefinitionReader {
 
-    BeanFactory beanFactory;
+    SimpleBeanFactory simpleBeanFactory;
 
-    public XmlBeanDefinitionReader(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
+    public XmlBeanDefinitionReader(SimpleBeanFactory beanFactory) {
+        this.simpleBeanFactory = beanFactory;
     }
 
     public void loadBeanDefinitions(Resource resource) {
@@ -21,7 +21,7 @@ public class XmlBeanDefinitionReader {
             Element element = (Element) resource.next();
             String beanId = element.attributeValue("id");
             String beanClassName = element.attributeValue("class");
-            this.beanFactory.registerBeanDefinition(new BeanDefinition(beanId, beanClassName));
+            this.simpleBeanFactory.registerBeanDefinition(new BeanDefinition(beanId, beanClassName));
         }
     }
 

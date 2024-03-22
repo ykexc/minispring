@@ -11,6 +11,13 @@ public interface BeanFactory {
 
     Object getBean(String beanName) throws NoSuchBeanDefinitionException;
 
-    void registerBeanDefinition(BeanDefinition beanDefinition);
+    Boolean containsBean(String beanName);
+
+    //void registerBean(String beanName, Object obj);
+
+
+    boolean isSingleton(String name);
+    boolean isPrototype(String name);
+    Class<?> getType(String name);
 
 }
