@@ -130,6 +130,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         paramValues[i] = argumentValue.getValue();
                     }
                 }
+
                 try {
                     con = clz.getConstructor(paramTypes);
                     obj = con.newInstance(paramValues);

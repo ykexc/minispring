@@ -20,12 +20,16 @@ public class ArgumentValues {
         indexedArgumentValues.put(key, newValue);
     }
 
+    public void addArgumentValue(ArgumentValue argumentValue) {
+        this.genericArgumentValues.add(argumentValue);
+    }
+
     public boolean hasIndexedArgumentValue(int index) {
         return this.indexedArgumentValues.containsKey(index);
     }
 
     public void addGenericArgumentValue(Object value, String type) {
-        this.genericArgumentValues.add(new ArgumentValue(value, type));
+        this.genericArgumentValues.add(new ArgumentValue(type, value));
     }
 
     private void addGenericArgumentValue(ArgumentValue newValue) {
