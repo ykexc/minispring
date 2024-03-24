@@ -12,7 +12,7 @@ public class BeanDefinition {
 
     String SCOPE_PROTOTYPE = "prototype";
 
-    private boolean lazyInit = false;
+    private boolean lazyInit = true;
 
     private String[] dependsOn;
 
