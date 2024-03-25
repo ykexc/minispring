@@ -1,4 +1,4 @@
-package com.minis.beans.exception;
+package com.minis.beans.factory.exception;
 
 /**
  * @author mqz

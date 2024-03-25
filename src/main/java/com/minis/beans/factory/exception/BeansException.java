@@ -1,4 +1,4 @@
-package com.minis.beans.exception;
+package com.minis.beans.factory.exception;
 
 public class BeansException extends Exception {
   public BeansException(String msg) {

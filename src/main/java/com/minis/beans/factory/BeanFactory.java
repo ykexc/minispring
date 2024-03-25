@@ -1,6 +1,7 @@
-package com.minis.beans;
+package com.minis.beans.factory;
 
-import com.minis.beans.exception.NoSuchBeanDefinitionException;
+import com.minis.beans.factory.exception.BeansException;
+import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
 
 /**
  * @author mqz
@@ -9,7 +10,7 @@ import com.minis.beans.exception.NoSuchBeanDefinitionException;
  */
 public interface BeanFactory {
 
-    Object getBean(String beanName) throws NoSuchBeanDefinitionException;
+    Object getBean(String beanName) throws NoSuchBeanDefinitionException, BeansException;
 
     Boolean containsBean(String beanName);
 
