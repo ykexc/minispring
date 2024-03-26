@@ -10,15 +10,15 @@ import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
  */
 public interface BeanFactory {
 
-    Object getBean(String beanName) throws NoSuchBeanDefinitionException, BeansException;
+    Object getBean(String beanName) throws NoSuchBeanDefinitionException, BeansException, IllegalAccessException;
 
-    Boolean containsBean(String beanName);
+    Boolean containsBean(String beanName) throws IllegalAccessException;
 
     //void registerBean(String beanName, Object obj);
 
 
-    boolean isSingleton(String name);
-    boolean isPrototype(String name);
-    Class<?> getType(String name);
+    boolean isSingleton(String name) throws IllegalAccessException;
+    boolean isPrototype(String name) throws IllegalAccessException;
+    Class<?> getType(String name) throws IllegalAccessException;
 
 }

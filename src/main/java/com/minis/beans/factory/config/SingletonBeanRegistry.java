@@ -5,12 +5,12 @@ package com.minis.beans.factory.config;
  */
 public interface SingletonBeanRegistry {
 
-    void registerSingleton(String beanName, Object singletonObject);
+    void registerSingleton(String beanName, Object singletonObject) throws IllegalAccessException;
 
-    Object getSingleton(String beanName);
+    Object getSingleton(String beanName) throws IllegalAccessException;
 
-    boolean containsSingleton(String beanName);
+    boolean containsSingleton(String beanName) throws IllegalAccessException;
 
-    String[] getSingletonNames();
+    String[] getSingletonNames() throws IllegalAccessException;
 
 }

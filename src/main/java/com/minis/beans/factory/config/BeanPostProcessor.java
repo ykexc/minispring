@@ -1,5 +1,6 @@
 package com.minis.beans.factory.config;
 
+import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.exception.BeansException;
 
 /**
@@ -11,4 +12,5 @@ public interface BeanPostProcessor {
 
     Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException;
 
+    void setBeanFactory(BeanFactory beanFactory);
 }

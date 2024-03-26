@@ -3,9 +3,7 @@ package com.minis.beans.factory.support;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
-import com.minis.beans.factory.config.BeanDefinition;
-import com.minis.beans.factory.config.ConstructorArgumentValue;
-import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.beans.factory.config.*;
 import com.minis.beans.factory.exception.BeansException;
 import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
 
@@ -21,13 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author mqz
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
-    private List<String> beanDefinitionNames = new ArrayList<>();
+    protected List<String> beanDefinitionNames = new ArrayList<>();
 
-    private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+    protected final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
     public AbstractBeanFactory() {
     }
@@ -63,14 +61,14 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 this.registerBean(beanName, singleton);
                 //  进行beanpostprocessor操作
                 //  step1: postProcessBeforeInitialization
-                applyBeanPostProcessorBeforeInitialization(singleton, beanName);
+                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
                 //  stpe2: init-method
                 if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().isEmpty()) {
                     invokeInitMethod(beanDefinition, singleton);
                 }
                 //  step3: postProcessorAfterInitialization
-                applyBeanPostProcessorAfterInitialization(singleton, beanName);
+                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
@@ -144,9 +142,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return obj;
     }
 
-    protected abstract Object applyBeanPostProcessorBeforeInitialization(Object singleton, String beanName) throws BeansException;
+    protected abstract Object applyBeanPostProcessorsBeforeInitialization(Object singleton, String beanName) throws BeansException;
 
-    protected abstract Object applyBeanPostProcessorAfterInitialization(Object obj, String beanName) throws BeansException;
+    protected abstract Object applyBeanPostProcessorsAfterInitialization(Object obj, String beanName) throws BeansException;
 
     private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
         Class<?> clz = beanDefinition.getBeanClass();
@@ -287,6 +285,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             }
         }
     }
+
 
 
 }

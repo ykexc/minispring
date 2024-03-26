@@ -3,12 +3,18 @@ package com.minis.context;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.minis.beans.factory.config.AutowireCapableBeanFactory;
+import com.minis.beans.factory.config.BeanFactoryPostProcessor;
+import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.exception.BeansException;
 import com.minis.beans.factory.support.AbstractBeanFactory;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author mqz
@@ -16,18 +22,20 @@ import com.minis.core.Resource;
  * @since 1.0
  * 这里使用到了装饰器模式哦
  */
-public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
+public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
-    AbstractBeanFactory beanFactory;
+    DefaultListableBeanFactory beanFactory;
+
+    private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
 
-    public ClassPathXmlApplicationContext(String fileName) {
+    public ClassPathXmlApplicationContext(String fileName) throws BeansException, IllegalAccessException {
         this(fileName, true);
     }
 
-    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
+    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) throws BeansException, IllegalAccessException {
         Resource res = new ClassPathXmlResource(fileName);
-        AutowireCapableBeanFactory beanFactory = new AutowireCapableBeanFactory();
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         reader.loadBeanDefinitions(res);
         this.beanFactory = beanFactory;
@@ -48,44 +56,56 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     }
 
 
-    public void refresh() {
-        // Register bean processors that intercept bean creation.
-        registerBeanPostProcessors((AutowireCapableBeanFactory) this.beanFactory);
-        // Initialize other special beans in specific context subclasses.
-        onRefresh();
+
+    @Override
+    void registerListeners() {
+        ApplicationListener applicationListener = new ApplicationListener();
+        this.getApplicationEventPublisher().addApplicationListener(applicationListener);
     }
 
-    private void registerBeanPostProcessors(AutowireCapableBeanFactory beanFactory) {
-        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+    @Override
+    void initApplicationEventPublisher() {
+        ApplicationEventPublisher aep = new SimpleApplicationEventPublisher();
+        this.setApplicationEventPublisher(aep);
     }
+
+    @Override
+    void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+
+    }
+
+    @Override
+    void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
+        this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+    }
+
 
     public void registerBean(String beanName, Object obj) {
         this.beanFactory.registerBean(beanName, obj);
     }
 
-    private void onRefresh() {
+    public void onRefresh() {
         this.beanFactory.refresh();
     }
 
     @Override
-    public boolean isSingleton(String name) {
-        // TODO Auto-generated method stub
-        return false;
+    void finishRefresh() {
+        publishEvent(new ContextRefreshEvent("Context Refreshed..."));
     }
 
     @Override
-    public boolean isPrototype(String name) {
-        return false;
-    }
-
-    @Override
-    public Class<?> getType(String name) {
-        return null;
+    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalAccessException {
+        return this.beanFactory;
     }
 
 
     @Override
     public void publishEvent(ApplicationEvent event) {
+        this.getApplicationEventPublisher().publishEvent(event);
+    }
 
+    @Override
+    public void addApplicationListener(ApplicationListener listener) {
+        this.getApplicationEventPublisher().addApplicationListener(listener);
     }
 }

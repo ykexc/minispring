@@ -6,12 +6,15 @@ import com.minis.context.ClassPathXmlApplicationContext;
 import com.minis.test.AService;
 import com.minis.test.BaseService;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * @author mqz
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BeansException, IllegalAccessException {
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
         AService aService;
         BaseService bService;
