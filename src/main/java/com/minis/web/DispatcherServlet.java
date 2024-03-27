@@ -1,5 +1,9 @@
 package com.minis.web;
 
+import com.minis.beans.factory.annotation.Autowired;
+import com.minis.beans.factory.exception.BeansException;
+import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -8,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -24,6 +29,8 @@ import java.util.Map;
 public class DispatcherServlet extends HttpServlet {
 
     private String sContextConfigLocation;
+
+    private WebApplicationContext webApplicationContext;
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +61,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+
+        this.webApplicationContext = (WebApplicationContext) this.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         sContextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
         try {
@@ -66,14 +75,19 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void refresh() {
-        initController();
+        try {
+            initController();
+        } catch (NoSuchBeanDefinitionException | BeansException e) {
+            e.printStackTrace();
+        }
+
         initMapping();
     }
 
     /**
      * 对实例化的每一个类进行初始化
      */
-    protected void initController() {
+    protected void initController() throws NoSuchBeanDefinitionException, BeansException {
         this.controllerNames = scanPackages(this.packageNames);
         for (String controllerName : this.controllerNames) {
             Object obj = null;
@@ -89,6 +103,7 @@ public class DispatcherServlet extends HttpServlet {
             //实例化
             try {
                 obj = clz.getDeclaredConstructor().newInstance();
+                populateBean(obj, controllerName);
                 this.controllerObjs.put(controllerName, obj);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
@@ -97,6 +112,25 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    protected Object populateBean(Object bean, String beanName) throws NoSuchBeanDefinitionException, BeansException, IllegalAccessException {
+        Object result = bean;
+        Class<?> clz = bean.getClass();
+        Field[] fields = clz.getDeclaredFields();
+        for (Field field : fields) {
+            boolean isAutowired = field.isAnnotationPresent(Autowired.class);
+            if (isAutowired) {
+                String fieldName = field.getName();
+                Object autowiredObj = this.webApplicationContext.getBean(fieldName);
+                try {
+                    field.setAccessible(true);
+                    field.set(bean, autowiredObj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 
     private void initMapping() {
         for (String controllerName : this.controllerNames) {
@@ -165,5 +199,10 @@ public class DispatcherServlet extends HttpServlet {
             e.printStackTrace();
         }
         resp.getWriter().write(objResult.toString());
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 }

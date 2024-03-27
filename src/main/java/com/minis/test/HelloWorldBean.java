@@ -1,5 +1,6 @@
 package com.minis.test;
 
+import com.minis.beans.factory.annotation.Autowired;
 import com.minis.web.RequestMapping;
 
 /**
@@ -7,9 +8,14 @@ import com.minis.web.RequestMapping;
  */
 public class HelloWorldBean {
 
+    @Autowired
+    private AServiceImpl aservice;
 
 
     @RequestMapping("/test")
-    public String doTest() { return "hello world for doGet!"; }
+    public String doTest() {
+        aservice.sayHello();
+        return "hello world for doGet!";
+    }
 
 }

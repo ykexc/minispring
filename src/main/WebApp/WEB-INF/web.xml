@@ -3,32 +3,45 @@
          xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID">
-<servlet>
-    <servlet-name>minisMVC</servlet-name>
-    <servlet-class>com.minis.web.DispatcherServlet</servlet-class>
-    <init-param>
+
+    <listener>
+        <listener-class>
+            com.minis.web.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/minisMVC-servlet.xml</param-value>
-    </init-param>
+        <param-value>applicationContext.xml</param-value>
+    </context-param>
 
-    <init-param>
-        <param-name>readonly</param-name>
-        <param-value>false</param-value>
-    </init-param>
+    <servlet>
+        <servlet-name>minisMVC</servlet-name>
+        <servlet-class>com.minis.web.DispatcherServlet</servlet-class>
 
-    <init-param>
-        <param-name>debug</param-name>
-        <param-value>0</param-value>
-    </init-param>
-    <init-param>
-        <param-name>listings</param-name>
-        <param-value>false</param-value>
-    </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/minisMVC-servlet.xml</param-value>
+        </init-param>
 
-    <load-on-startup>1</load-on-startup>
-</servlet>
-<servlet-mapping>
-    <servlet-name>minisMVC</servlet-name>
-    <url-pattern>/</url-pattern>
-</servlet-mapping>
+        <init-param>
+            <param-name>readonly</param-name>
+            <param-value>false</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>listings</param-name>
+            <param-value>false</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>minisMVC</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 </web-app>
