@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID">
 
+<!--加载顺序: context-param -> listener -> servlet    -->
     <listener>
         <listener-class>
             com.minis.web.ContextLoaderListener
@@ -17,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID">
 
     <servlet>
         <servlet-name>minisMVC</servlet-name>
-        <servlet-class>com.minis.web.DispatcherServlet</servlet-class>
+        <servlet-class>com.minis.web.servlet.DispatcherServlet</servlet-class>
 
         <init-param>
             <param-name>contextConfigLocation</param-name>

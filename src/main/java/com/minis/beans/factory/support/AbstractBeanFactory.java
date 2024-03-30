@@ -1,8 +1,7 @@
 package com.minis.beans.factory.support;
 
-import com.minis.beans.PropertyValue;
-import com.minis.beans.PropertyValues;
-import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.config.PropertyValue;
+import com.minis.beans.factory.config.PropertyValues;
 import com.minis.beans.factory.config.*;
 import com.minis.beans.factory.exception.BeansException;
 import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
@@ -57,18 +56,20 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 //如果连毛胚都没有,则创建bean实例并注册
                 System.out.println("get bean null --------------- " + beanName);
                 BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-                singleton = createBean(beanDefinition);
-                this.registerBean(beanName, singleton);
-                //  进行beanpostprocessor操作
-                //  step1: postProcessBeforeInitialization
-                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                if (beanDefinition != null) {
+                    singleton = createBean(beanDefinition);
+                    this.registerBean(beanName, singleton);
+                    //  进行beanpostprocessor操作
+                    //  step1: postProcessBeforeInitialization
+                    applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
-                //  stpe2: init-method
-                if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().isEmpty()) {
-                    invokeInitMethod(beanDefinition, singleton);
+                    //  stpe2: init-method
+                    if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().isEmpty()) {
+                        invokeInitMethod(beanDefinition, singleton);
+                    }
+                    //  step3: postProcessorAfterInitialization
+                    applyBeanPostProcessorsAfterInitialization(singleton, beanName);
                 }
-                //  step3: postProcessorAfterInitialization
-                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
@@ -128,15 +129,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private Object createBean(BeanDefinition beanDefinition) {
         Class<?> clz = null;
-        //创建毛坯实例
-        Object obj = doCreateBean(beanDefinition);
-        //存放到毛坯实例缓存中
-        this.earlySingletonObjects.put(beanDefinition.getId(), obj);
         try {
             clz = Class.forName(beanDefinition.getClassName());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        //创建毛坯实例
+        Object obj = doCreateBean(beanDefinition);
+        //存放到毛坯实例缓存中
+        this.earlySingletonObjects.put(beanDefinition.getId(), obj);
+
         //完善bean, 主要是处理属性
         populateBean(beanDefinition, clz, obj);
         return obj;
@@ -168,10 +171,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         try {
             clz = Class.forName(beanDefinition.getClassName());
-
             //handle constructor
             ConstructorArgumentValues argumentValues = beanDefinition.getConstructorArgumentValues();
-            if (!argumentValues.isEmpty()) {
+            if (argumentValues != null && !argumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[argumentValues.getArgumentCount()];
                 for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
@@ -227,7 +229,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         //handle properties
         System.out.println("handle properties for bean : " + beanDefinition.getId());
         PropertyValues propertyValues = beanDefinition.getPropertyValues();
-        if (!propertyValues.isEmpty()) {
+        if (propertyValues != null && !propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
                 PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
                 String pName = propertyValue.getName();

@@ -1,9 +1,6 @@
 package com.minis.beans.factory.xml;
 
-import com.minis.beans.*;
-import com.minis.beans.factory.config.ConstructorArgumentValue;
-import com.minis.beans.factory.config.ConstructorArgumentValues;
-import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.*;
 import com.minis.beans.factory.support.AbstractBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;

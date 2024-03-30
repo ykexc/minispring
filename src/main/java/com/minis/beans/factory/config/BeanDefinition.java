@@ -1,7 +1,5 @@
 package com.minis.beans.factory.config;
 
-import com.minis.beans.PropertyValues;
-
 /**
  * @author mqz
  * @version 1.0
