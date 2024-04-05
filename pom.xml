@@ -42,7 +42,21 @@
             <version>${tomcat.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>yk-util</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>main-ykutil</id>
+            <url>https://raw.github.com/ykexc/ykutil/main</url>
+        </repository>
+
+    </repositories>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

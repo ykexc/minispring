@@ -1,11 +1,15 @@
 package com.minis.web.servlet;
 
 import com.minis.web.WebApplicationContext;
+import com.minis.web.WebDataBinder;
+import com.minis.web.WebDataBinderFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 /**
  * @author mqz
@@ -25,21 +29,29 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter{
         handleInternal(request, response, (HandlerMethod) handler);
     }
 
-    private void handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handler) {
-        Method method = handler.getMethod();
-        Object obj = handler.getBean();
-        Object objResult = null;
+    private void handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         try {
-            objResult = method.invoke(obj);
+            invokeHandlerMethod(request, response, handlerMethod);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        try {
-            response.getWriter().append(objResult.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+    protected void invokeHandlerMethod(HttpServletRequest request, HttpServletResponse resp, HandlerMethod handlerMethod) throws InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+        WebDataBinderFactory binderFactory = new WebDataBinderFactory();
+        Parameter[] methodParameters = handlerMethod.getMethod().getParameters();
+        Object[] methodParamObjs = new Object[methodParameters.length];
+        int i = 0;
+        for (Parameter methodParameter : methodParameters) {
+            Object methodParamObj = methodParameter.getType().newInstance();
+            //  给这个参数创建WebDataBinder
+            WebDataBinder binder = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
+            binder.bind(request);
+            methodParamObjs[i++] = methodParamObj;
         }
+        Method invocableMethod = handlerMethod.getMethod();
+        Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
+        resp.getWriter().append(returnObj.toString());
     }
 
 }

@@ -5,37 +5,41 @@ package com.minis.beans.factory.config;
  * @version 1.0
  * @since 1.0
  */
-public class PropertyValue {
-
-    private final String name;
-
-    private final Object value;
-
+public class PropertyValue{
     private final String type;
-
+    private final String name;
+    private final Object value;
     private final boolean isRef;
 
     public PropertyValue(String type, String name, Object value, boolean isRef) {
+        this.type = type;
         this.name = name;
         this.value = value;
-        this.type = type;
         this.isRef = isRef;
     }
 
+    public PropertyValue(String type, String name, Object value) {
+        this(type, name, value, false);
+    }
+
+    public PropertyValue(String name, Object value) {
+        this("", name, value, false);
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Object getValue() {
-        return value;
-    }
-
-
-    public String getType() {
-        return type;
+        return this.value;
     }
 
     public boolean getIsRef() {
         return isRef;
     }
+
 }

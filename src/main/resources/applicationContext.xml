@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
+    <bean id="webBindingInitializer" class="com.test.DateInitializer">    </bean>
+
     <bean id="bbs" class="com.minis.test.BaseBaseService">
         <property type="com.minis.test.AServiceImpl" name="as" ref="aservice"/>
     </bean>
