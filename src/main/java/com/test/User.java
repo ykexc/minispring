@@ -1,9 +1,9 @@
 package com.test;
 
 public class User {
-        String name;
+        public String name;
 
-        String gender;
+        public String gender;
 
         public String getName() {
             return name;

@@ -7,6 +7,7 @@ import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.exception.BeansException;
 import com.minis.beans.factory.exception.NoSuchBeanDefinitionException;
 import com.minis.core.env.Environment;
+import com.minis.web.servlet.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,11 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     @Override
     public Object getBean(String beanName) throws NoSuchBeanDefinitionException, BeansException, IllegalAccessException {
-        return getBeanFactory().getBean(beanName);
+        Object retObj = getBeanFactory().getBean(beanName);
+        if (retObj instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) retObj).setApplicationContext(this);
+        }
+        return retObj;
     }
 
     @Override

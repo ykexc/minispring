@@ -64,11 +64,9 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor {
                 Field field = clz.getDeclaredField(propertyName);
                 propertyClz = field.getType();
                 //获取设置属性的方法，按照约定为setXxxx（）
-                this.writeMethod = clz.getDeclaredMethod("set" +
-                                                         propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
+                this.writeMethod = clz.getDeclaredMethod("set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
                 //获取读属性的方法，按照约定为getXxxx（）
-                this.readMethod = clz.getDeclaredMethod("get" +
-                                                        propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
+                this.readMethod = clz.getDeclaredMethod("get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1));
             } catch (Exception e) {
                 e.printStackTrace();
             }

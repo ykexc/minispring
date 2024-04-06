@@ -7,6 +7,9 @@ import com.minis.web.AnnotationConfigWebApplicationContext;
 import com.minis.web.RequestMapping;
 import com.minis.web.WebApplicationContext;
 import com.minis.web.XmlScanComponentHelper;
+import com.minis.web.servlet.view.ModelAndView;
+import com.minis.web.servlet.view.View;
+import com.minis.web.servlet.view.ViewResolver;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -33,6 +36,11 @@ public class DispatcherServlet extends HttpServlet {
 
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
 
+    public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
+    public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
+
+    public static final String VIEW_RESOLVER_BEAN_NAME = "viewResolver";
+
     private String sContextConfigLocation;
 
     private WebApplicationContext webApplicationContext;
@@ -51,6 +59,8 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping handlerMapping;
 
     private HandlerAdapter handlerAdapter;
+
+    private ViewResolver viewResolver;
 
 
     public DispatcherServlet() {
@@ -88,15 +98,27 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void initViewResolvers(WebApplicationContext wac) {
-        // pass
+        try {
+            this.viewResolver = (ViewResolver) wac.getBean(VIEW_RESOLVER_BEAN_NAME);
+        } catch (BeansException | NoSuchBeanDefinitionException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initHandlerMappings(WebApplicationContext wac) {
-        this.handlerMapping = new RequestMappingHandlerMapping(wac);
+        try {
+            this.handlerMapping = (HandlerMapping) wac.getBean(HANDLER_MAPPING_BEAN_NAME);
+        } catch (BeansException | NoSuchBeanDefinitionException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initHandlerAdapters(WebApplicationContext wac) {
-        this.handlerAdapter = new RequestMappingHandlerAdapter(wac);
+        try {
+            this.handlerAdapter = (HandlerAdapter) wac.getBean(HANDLER_ADAPTER_BEAN_NAME);
+        } catch (NoSuchBeanDefinitionException | BeansException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -137,10 +159,36 @@ public class DispatcherServlet extends HttpServlet {
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpServletRequest processRequest = request;
         HandlerMethod handlerMethod = null;
+        ModelAndView mv = null;
         handlerMethod = this.handlerMapping.getHandler(processRequest);
         if (handlerMethod == null) return;
         HandlerAdapter adapter = this.handlerAdapter;
-        handlerAdapter.handle(processRequest, response, handlerMethod);
+        mv = adapter.handle(processRequest, response, handlerMethod);
+        render(processRequest, response, mv);
+    }
+
+    protected void render(HttpServletRequest request, HttpServletResponse resp, ModelAndView mv) throws Exception {
+        if (mv == null) {
+            resp.getWriter().flush();
+            resp.getWriter().close();
+        } else {
+            String sTarget = mv.getViewName();
+            Map<String, Object> modelMap = mv.getModel();
+            View view = resolveViewName(sTarget, modelMap, request);
+            if (view == null) {  //如果没有view就404
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                view.render(modelMap, request, resp);
+            }
+
+        }
+    }
+
+    protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) throws Exception {
+        if (this.viewResolver != null) {
+            return viewResolver.resolveViewName(viewName);
+        }
+        return null;
     }
 
 }
