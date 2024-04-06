@@ -1,4 +1,4 @@
-package com.test;
+package com.test.mvc;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;

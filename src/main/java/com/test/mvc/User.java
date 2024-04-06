@@ -1,4 +1,4 @@
-package com.test;
+package com.test.mvc;
 
 public class User {
         public String name;

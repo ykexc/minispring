@@ -20,7 +20,7 @@
 
     <bean id="handlerMapping" class="com.minis.web.servlet.RequestMappingHandlerMapping"/>
 
-    <bean id="webBindingInitializer" class="com.test.DateInitializer" />
+    <bean id="webBindingInitializer" class="com.test.mvc.DateInitializer" />
 
     <bean id="messageConverter" class="com.minis.web.http.DefaultHttpMessageConverter">
         <property type="com.minis.util.ObjectMapper" name="objectMapper" ref="objectMapper"/>
@@ -34,6 +34,17 @@
         <property type="String" name="viewClassName" value="com.minis.web.servlet.view.JstlView" />
         <property type="String" name="prefix" value="/jsp/" />
         <property type="String" name="suffix" value=".jsp" />
+    </bean>
+
+
+    <bean id="dataSource" class="com.minis.jdbc.datasource.SingleConnectionDataSource">
+        <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property type="String" name="url" value="jdbc:mysql://localhost:3306/minispring?useSSL=false&amp;serverTimezone=UTC"/>
+        <property type="String" name="username" value="root"/>
+        <property type="String" name="password" value="123456"/>
+    </bean>
+    <bean id="jdbcTemplate" class="com.minis.jdbc.core.JdbcTemplate" >
+        <property type="javax.sql.DataSource" name="dataSource" ref="dataSource"/>
     </bean>
 
 </beans>

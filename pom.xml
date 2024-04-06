@@ -43,6 +43,12 @@
         </dependency>
 
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.example</groupId>
             <artifactId>yk-util</artifactId>
             <version>1.0</version>
