@@ -20,31 +20,36 @@
 
     <bean id="handlerMapping" class="com.minis.web.servlet.RequestMappingHandlerMapping"/>
 
-    <bean id="webBindingInitializer" class="com.test.mvc.DateInitializer" />
+    <bean id="webBindingInitializer" class="com.test.mvc.DateInitializer"/>
 
     <bean id="messageConverter" class="com.minis.web.http.DefaultHttpMessageConverter">
         <property type="com.minis.util.ObjectMapper" name="objectMapper" ref="objectMapper"/>
     </bean>
-    <bean id="objectMapper" class="com.minis.util.DefaultObjectMapper" >
+    <bean id="objectMapper" class="com.minis.util.DefaultObjectMapper">
         <property type="String" name="dateFormat" value="yyyy/MM/dd"/>
         <property type="String" name="decimalFormat" value="###.##"/>
     </bean>
 
-    <bean id="viewResolver" class="com.minis.web.servlet.view.InternalResourceViewResolver" >
-        <property type="String" name="viewClassName" value="com.minis.web.servlet.view.JstlView" />
-        <property type="String" name="prefix" value="/jsp/" />
-        <property type="String" name="suffix" value=".jsp" />
+    <bean id="viewResolver" class="com.minis.web.servlet.view.InternalResourceViewResolver">
+        <property type="String" name="viewClassName" value="com.minis.web.servlet.view.JstlView"/>
+        <property type="String" name="prefix" value="/jsp/"/>
+        <property type="String" name="suffix" value=".jsp"/>
     </bean>
 
 
     <bean id="dataSource" class="com.minis.jdbc.datasource.pooled.PooledDatasource">
         <property type="String" name="driverName" value="com.mysql.cj.jdbc.Driver"/>
-        <property type="String" name="url" value="jdbc:mysql://localhost:3306/minispring?useSSL=false&amp;serverTimezone=UTC"/>
+        <property type="String" name="url"
+                  value="jdbc:mysql://localhost:3306/minispring?useSSL=false&amp;serverTimezone=UTC"/>
         <property type="String" name="username" value="root"/>
         <property type="String" name="password" value="123456"/>
     </bean>
-    <bean id="jdbcTemplate" class="com.minis.jdbc.core.JdbcTemplate" >
+    <bean id="jdbcTemplate" class="com.minis.jdbc.core.JdbcTemplate">
         <property type="javax.sql.DataSource" name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="com.minis.batis.DefaultSqlSessionFactory" init-method="init">
+        <property type="String" name="mapperLocations" value="mapper"/>
     </bean>
 
 </beans>

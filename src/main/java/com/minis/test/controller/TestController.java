@@ -1,5 +1,7 @@
 package com.minis.test.controller;
 
+import com.minis.batis.SqlSession;
+import com.minis.batis.SqlSessionFactory;
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.jdbc.core.JdbcTemplate;
 import com.minis.test.AServiceImpl;
@@ -20,6 +22,9 @@ public class TestController {
 
     @Autowired
     private AServiceImpl aservice;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
 
     @Autowired
@@ -97,6 +102,23 @@ public class TestController {
         }));
         System.out.println(res);
         return res;
+    }
+
+    @RequestMapping("/test_jdbc4")
+    @ResponseBody
+    public com.test.jdbc.entity.User doTest10() {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        String sqlId = "com.test.jdbc.entity.User.getUserInfo";
+        return (com.test.jdbc.entity.User) sqlSession.selectOne(sqlId, new Object[]{Integer.valueOf(1)}, pst -> {
+            ResultSet resultSet = pst.executeQuery();
+            com.test.jdbc.entity.User user = new com.test.jdbc.entity.User();
+            if (resultSet.next()) {
+                user.setId(resultSet.getInt("id"));
+                user.setName(resultSet.getString("name"));
+                user.setBirthday(resultSet.getDate("birthday"));
+            }
+            return user;
+        });
     }
 
 }
