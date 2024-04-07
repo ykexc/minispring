@@ -1,4 +1,4 @@
-package com.minis.jdbc.datasource;
+package com.minis.jdbc.datasource.unpooled;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 /**
  * @author mqz
+ * this is an unpooled datasource
  */
 public class SingleConnectionDataSource implements DataSource {
 

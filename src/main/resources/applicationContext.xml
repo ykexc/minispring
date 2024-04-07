@@ -37,8 +37,8 @@
     </bean>
 
 
-    <bean id="dataSource" class="com.minis.jdbc.datasource.SingleConnectionDataSource">
-        <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+    <bean id="dataSource" class="com.minis.jdbc.datasource.pooled.PooledDatasource">
+        <property type="String" name="driverName" value="com.mysql.cj.jdbc.Driver"/>
         <property type="String" name="url" value="jdbc:mysql://localhost:3306/minispring?useSSL=false&amp;serverTimezone=UTC"/>
         <property type="String" name="username" value="root"/>
         <property type="String" name="password" value="123456"/>

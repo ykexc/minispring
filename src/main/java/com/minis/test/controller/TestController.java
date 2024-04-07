@@ -83,4 +83,20 @@ public class TestController {
         });
     }
 
+    @RequestMapping("/test_jdbc3")
+    @ResponseBody
+    public List<com.test.jdbc.entity.User> doTest9() {
+        String sql = "select * from user where id >= ?";
+        Integer id = Integer.valueOf(1);
+        List<com.test.jdbc.entity.User> res = jdbcTemplate.query(sql, new Object[]{id}, ((rs, rowNum) -> {
+            com.test.jdbc.entity.User user = new com.test.jdbc.entity.User();
+            user.setId(id);
+            user.setName(rs.getString("name"));
+            user.setBirthday(rs.getDate("birthday"));
+            return user;
+        }));
+        System.out.println(res);
+        return res;
+    }
+
 }
