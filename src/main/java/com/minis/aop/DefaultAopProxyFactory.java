@@ -7,7 +7,7 @@ public class DefaultAopProxyFactory implements AopProxyFactory {
 
 
     @Override
-    public AopProxy createAopProxy(Object target, Advisor advisor) {
-        return new CGLibDynamicAopProxy(target, advisor);
+    public AopProxy createAopProxy(Object target, PointcutAdvisor advisor) {
+        return new JdkDynamicAopProxy(target, advisor);
     }
 }

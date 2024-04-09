@@ -26,29 +26,20 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
 
     private ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
 
-    private Advisor advisor;
 
     private Object singletonInstance;
 
+    private PointcutAdvisor advisor;
+
 
     private synchronized void initializeAdvisor() {
-        Object advice = null;
-        MethodInterceptor methodInterceptor = null;
+        Object advice;
         try {
             advice = this.beanFactory.getBean(this.interceptorName);
         } catch (NoSuchBeanDefinitionException | BeansException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        if (advice instanceof BeforeAdvice) {
-            methodInterceptor = new MethodBeforeAdviceInterceptor((MethodBeforeAdvice) advice);
-        } else if (advice instanceof AfterAdvice) {
-            methodInterceptor = new AfterReturningAdviceInterceptor((AfterReturningAdvice) advice);
-        } else if (advice instanceof MethodInterceptor) {
-            methodInterceptor = (MethodInterceptor) advice;
-        }
-
-        advisor = new DefaultAdvisor();
-        advisor.setMethodInterceptor(methodInterceptor);
+        this.advisor = (PointcutAdvisor) advice;
 
     }
 

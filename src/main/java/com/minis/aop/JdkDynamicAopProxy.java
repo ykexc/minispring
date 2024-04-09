@@ -13,9 +13,9 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
 
     Object target;
 
-    Advisor advisor;
+    PointcutAdvisor advisor;
 
-    public JdkDynamicAopProxy(Object target, Advisor advisor) {
+    public JdkDynamicAopProxy(Object target, PointcutAdvisor advisor) {
         this.target = target;
         this.advisor = advisor;
     }
@@ -35,12 +35,15 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //采用命令模式，将参数以对象形式传递
 
-        if (method.getName().equals("doAction")) {
-            Class<?> targetClass = target != null ? target.getClass() : null;
+
+        Class<?> targetClass = target != null ? target.getClass() : null;
+
+        if (this.advisor.getPointcut().getMethodMatcher().matches(method, targetClass)) {
             MethodInterceptor interceptor = this.advisor.getMethodInterceptor();
             MethodInvocation methodInvocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass);
             return interceptor.invoke(methodInvocation);
         }
-        return null;
+
+        return method.invoke(target, args);
     }
 }

@@ -7,4 +7,7 @@ public interface IAction {
 
     String doAction();
 
+
+    String doAction2();
+
 }

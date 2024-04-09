@@ -5,6 +5,6 @@ package com.minis.aop;
  */
 public interface AopProxyFactory {
 
-    AopProxy createAopProxy(Object target, Advisor advisor);
+    AopProxy createAopProxy(Object target, PointcutAdvisor advisor);
 
 }

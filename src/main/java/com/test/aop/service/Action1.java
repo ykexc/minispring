@@ -9,4 +9,10 @@ public class Action1 implements IAction{
         System.out.println("really do action");
         return "do action";
     }
+
+    @Override
+    public String doAction2() {
+        System.out.println("really do action2");
+        return "do action2";
+    }
 }

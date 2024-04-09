@@ -141,4 +141,9 @@ public class TestController {
         response.getWriter().write(action.doAction());
     }
 
+    @RequestMapping("/test_aop3")
+    public void doTest13(HttpServletResponse response) throws IOException {
+        response.getWriter().write(action.doAction() + " " + action.doAction2());
+    }
+
 }
