@@ -133,4 +133,12 @@ public class TestController {
         response.getWriter().write(action.doAction());
     }
 
+    @RequestMapping("/test_aop2")
+    public void doTest12(HttpServletResponse response) throws IOException {
+
+        //You can achieve before, after, and custom by adjusting the class of MethodInterceptor bean
+
+        response.getWriter().write(action.doAction());
+    }
+
 }

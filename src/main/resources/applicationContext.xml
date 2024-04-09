@@ -56,6 +56,10 @@
     <bean id="realaction" class="com.test.aop.service.Action1" />
     <bean id="action" class="com.minis.aop.ProxyFactoryBean" >
         <property type="java.lang.Object" name="target" ref="realaction"/>
+        <property type="String" name="interceptorName" value="myInterceptor"/>
     </bean>
+
+    <bean id="myInterceptor" class="com.test.aop.service.TracingInterceptor" />
+
 
 </beans>
