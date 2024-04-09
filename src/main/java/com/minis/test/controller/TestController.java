@@ -8,8 +8,11 @@ import com.minis.test.AServiceImpl;
 import com.minis.web.RequestMapping;
 import com.minis.web.ResponseBody;
 import com.minis.web.servlet.view.ModelAndView;
+import com.test.aop.service.IAction;
 import com.test.mvc.User;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,10 @@ public class TestController {
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
+
+
+    @Autowired
+    private IAction action;
 
 
     @Autowired
@@ -119,6 +126,11 @@ public class TestController {
             }
             return user;
         });
+    }
+
+    @RequestMapping("/test_aop1")
+    public void doTest11(HttpServletResponse response) throws IOException {
+        response.getWriter().write(action.doAction());
     }
 
 }

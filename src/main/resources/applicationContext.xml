@@ -52,4 +52,10 @@
         <property type="String" name="mapperLocations" value="mapper"/>
     </bean>
 
+
+    <bean id="realaction" class="com.test.aop.service.Action1" />
+    <bean id="action" class="com.minis.aop.ProxyFactoryBean" >
+        <property type="java.lang.Object" name="target" ref="realaction"/>
+    </bean>
+
 </beans>

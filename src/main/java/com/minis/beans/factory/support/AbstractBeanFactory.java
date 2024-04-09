@@ -1,5 +1,6 @@
 package com.minis.beans.factory.support;
 
+import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.PropertyValue;
 import com.minis.beans.factory.config.PropertyValues;
 import com.minis.beans.factory.config.*;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author mqz
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
     protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
@@ -71,10 +72,26 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                     applyBeanPostProcessorsAfterInitialization(singleton, beanName);
                 }
             }
+        } else {
+            System.out.println("-----------bean exist--------");
+        }
+        if (singleton instanceof FactoryBean) {
+            System.out.println("factory bean -------------- " + beanName + "----------------"+singleton);
+            return this.getObjectForBeanInstance(singleton, beanName);
         }
         return singleton;
     }
 
+
+    protected Object getObjectForBeanInstance(Object singleton, String beanName) {
+        if (!(singleton instanceof FactoryBean)) {
+            return singleton;
+        }
+        Object object;
+        FactoryBean<?> factory = (FactoryBean<?>) singleton;
+        object = getObjectFromFactoryBean(factory, beanName);
+        return object;
+    }
 
     @Override
     public Boolean containsBean(String beanName) {
