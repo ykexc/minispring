@@ -33,6 +33,9 @@ public class TestController {
     @Autowired
     private IAction action;
 
+    @Autowired
+    private IAction action2;
+
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -144,6 +147,12 @@ public class TestController {
     @RequestMapping("/test_aop3")
     public void doTest13(HttpServletResponse response) throws IOException {
         response.getWriter().write(action.doAction() + " " + action.doAction2());
+    }
+
+
+    @RequestMapping("/test_aop4")
+    public void doTest14(HttpServletResponse response) throws IOException {
+        response.getWriter().write(action.doAction() + action2.doAction());
     }
 
 }

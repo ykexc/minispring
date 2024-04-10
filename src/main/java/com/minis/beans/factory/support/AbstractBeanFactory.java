@@ -60,13 +60,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
                 if (beanDefinition != null) {
                     singleton = createBean(beanDefinition);
-                    this.registerBean(beanName, singleton);
+
                     if (singleton instanceof BeanFactoryAware) {
                         ((BeanFactoryAware) singleton).setBeanFactory(this);
                     }
                     //  进行beanpostprocessor操作
                     //  step1: postProcessBeforeInitialization
-                    applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                    singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
                     //  stpe2: init-method
                     if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().isEmpty()) {
@@ -74,6 +74,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                     }
                     //  step3: postProcessorAfterInitialization
                     applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+                    this.registerBean(beanName, singleton);
+                    this.removeSingleton(beanName);
                 }
             }
         } else {

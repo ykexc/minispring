@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
+
+    <bean id="autowiredAnnotationBeanPostProcessor"
+          class="com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
     <bean id="bbs" class="com.minis.test.BaseBaseService">
         <property type="com.minis.test.AServiceImpl" name="as" ref="aservice"/>
     </bean>
@@ -53,15 +57,17 @@
     </bean>
 
 
-    <bean id="realaction" class="com.test.aop.service.Action1" />
-    <bena id="beforeAdvice" class="com.test.aop.service.MyBeforeAdvice" />
+    <bean id="action" class="com.test.aop.service.Action1"/>
+    <bean id="action2" class="com.test.aop.service.Action2"/>
+    <bena id="beforeAdvice" class="com.test.aop.service.MyBeforeAdvice"/>
     <bean id="advisor" class="com.minis.aop.NameMatchMethodPointcutAdvisor">
         <property type="com.minis.aop.Advice" name="advice" ref="beforeAdvice"/>
         <property type="String" name="mappedName" value="do*"/>
     </bean>
-    <bean id="action" class="com.minis.aop.ProxyFactoryBean">
-        <property type="String" name="interceptorName" value="advisor" />
-        <property type="java.lang.Object" name="target" ref="realaction"/>
+
+    <bean id="autoProxyCreator" class="com.minis.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property type="String" name="pattern" value="action*"/>
+        <property type="String" name="interceptorName" value="advisor"/>
     </bean>
 
 

@@ -2,9 +2,7 @@ package com.minis.context;
 
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import com.minis.beans.factory.config.AutowireCapableBeanFactory;
-import com.minis.beans.factory.config.BeanFactoryPostProcessor;
-import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
+import com.minis.beans.factory.config.*;
 import com.minis.beans.factory.exception.BeansException;
 import com.minis.beans.factory.support.AbstractBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
@@ -56,11 +54,21 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
 
-
     @Override
     public void registerListeners() {
-        ApplicationListener applicationListener = new ApplicationListener();
-        this.getApplicationEventPublisher().addApplicationListener(applicationListener);
+        String[] bdNames = this.beanFactory.getBeanDefinitionNames();
+        for (String bdName : bdNames) {
+            Object bean = null;
+            try {
+                bean = getBean(bdName);
+            } catch (BeansException | NoSuchBeanDefinitionException e1) {
+                e1.printStackTrace();
+            }
+
+            if (bean instanceof ApplicationListener) {
+                this.getApplicationEventPublisher().addApplicationListener((ApplicationListener) bean);
+            }
+        }
     }
 
     @Override
@@ -71,12 +79,55 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     @Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
-
+        String[] bdNames = this.beanFactory.getBeanDefinitionNames();
+        for (String bdName : bdNames) {
+            BeanDefinition beanDefinition = this.beanFactory.getBeanDefinition(bdName);
+            String className = beanDefinition.getClassName();
+            Class<?> clz = null;
+            try {
+                clz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            if (BeanFactoryPostProcessor.class.isAssignableFrom(clz)) {
+                try {
+                    this.beanFactoryPostProcessors.add((BeanFactoryPostProcessor) clz.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            for (BeanFactoryPostProcessor processor : this.beanFactoryPostProcessors) {
+                try {
+                    processor.postProcessBeanFactory(bf);
+                } catch (BeansException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
-        this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+        System.out.println("try to registerBeanPostProcessors");
+        String[] bdNames = this.beanFactory.getBeanDefinitionNames();
+        for (String bdName : bdNames) {
+            BeanDefinition bd = this.beanFactory.getBeanDefinition(bdName);
+            String clzName = bd.getClassName();
+            Class<?> clz = null;
+            try {
+                clz = Class.forName(clzName);
+            } catch (ClassNotFoundException e1) {
+                e1.printStackTrace();
+            }
+            if (BeanPostProcessor.class.isAssignableFrom(clz)) {
+                System.out.println(" registerBeanPostProcessors : " + clzName);
+                try {
+                    this.beanFactory.addBeanPostProcessor((BeanPostProcessor) (this.beanFactory.getBean(bdName)));
+                } catch (BeansException | NoSuchBeanDefinitionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 

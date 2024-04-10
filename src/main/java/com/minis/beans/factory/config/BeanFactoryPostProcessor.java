@@ -1,5 +1,6 @@
 package com.minis.beans.factory.config;
 
+import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.exception.BeansException;
 
 /**
@@ -8,6 +9,6 @@ import com.minis.beans.factory.exception.BeansException;
 public interface BeanFactoryPostProcessor {
 
 
-    void postProcessBeanFactory() throws BeansException;
+    void postProcessBeanFactory(BeanFactory beanFactory) throws BeansException;
 
 }
